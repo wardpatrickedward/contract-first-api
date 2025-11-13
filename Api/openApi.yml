@@ -1,0 +1,260 @@
+﻿openapi: 3.0.3
+info:
+  title: Fruit Orders API
+  description: API for managing fruit orders (list existing orders, create new orders)
+  version: 1.0.0
+servers:
+  - url: http://localhost:5211
+    description: Local development
+paths:
+  /orders:
+    get:
+      summary: List fruit orders
+      description: Returns a list of existing fruit orders. Supports optional pagination.
+      operationId: listOrders
+      tags:
+        - orders
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of orders to return
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          examples:
+            sample:
+              value: 50
+        - name: offset
+          in: query
+          description: Number of orders to skip
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          examples:
+            sample:
+              value: 0
+      responses:
+        '200':
+          description: A JSON array of fruit orders
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    example: 2
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FruitOrder'
+              examples:
+                sample:
+                  value:
+                    total: 2
+                    items:
+                      - id: "ord-001"
+                        customerName: "Alice"
+                        items:
+                          - fruit: "Apple"
+                            quantity: 3
+                          - fruit: "Banana"
+                            quantity: 6
+                        status: "Pending"
+                        createdAt: "2025-01-10T09:30:00Z"
+                      - id: "ord-002"
+                        customerName: "Bob"
+                        items:
+                          - fruit: "Orange"
+                            quantity: 2
+                        status: "Shipped"
+                        createdAt: "2025-01-11T14:20:00Z"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    post:
+      summary: Create a new fruit order
+      description: Place a new order for fruits. Returns the created order with its id.
+      operationId: createOrder
+      tags:
+        - orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewFruitOrder'
+            examples:
+              sample:
+                value:
+                  customerName: "Charlie"
+                  items:
+                    - fruit: "Kiwi"
+                      quantity: 10
+      responses:
+        '201':
+          description: Order created successfully
+          headers:
+            Location:
+              description: URL of the newly created order
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FruitOrder'
+              examples:
+                sample:
+                  value:
+                    id: "ord-123"
+                    customerName: "Charlie"
+                    items:
+                      - fruit: "Kiwi"
+                        quantity: 10
+                    status: "Pending"
+                    createdAt: "2025-11-01T12:00:00Z"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /orders/{orderId}:
+    get:
+      summary: Get a single order
+      description: Retrieve a fruit order by its ID
+      operationId: getOrderById
+      tags:
+        - orders
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of the order
+          required: true
+          schema:
+            type: string
+          examples:
+            sample:
+              value: "ord-001"
+      responses:
+        '200':
+          description: A single fruit order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FruitOrder'
+              examples:
+                sample:
+                  value:
+                    id: "ord-001"
+                    customerName: "Alice"
+                    items:
+                      - fruit: "Apple"
+                        quantity: 3
+                    status: "Pending"
+                    createdAt: "2025-01-10T09:30:00Z"
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  schemas:
+    FruitItem:
+      type: object
+      required:
+        - fruit
+        - quantity
+      properties:
+        fruit:
+          type: string
+          description: Name of the fruit
+          example: "Apple"
+        quantity:
+          type: integer
+          description: Quantity requested
+          minimum: 1
+          example: 3
+    NewFruitOrder:
+      type: object
+      required:
+        - customerName
+        - items
+      properties:
+        customerName:
+          type: string
+          description: Name of the customer placing the order
+          example: "Charlie"
+        items:
+          type: array
+          description: List of fruit items in the order
+          items:
+            $ref: '#/components/schemas/FruitItem'
+    FruitOrder:
+      type: object
+      required:
+        - id
+        - customerName
+        - items
+        - status
+        - createdAt
+      properties:
+        id:
+          type: string
+          description: Unique order identifier
+          example: "ord-001"
+        customerName:
+          type: string
+          description: Name of the customer placing the order
+          example: "Charlie"
+        items:
+          type: array
+          description: List of fruit items in the order
+          items:
+            $ref: '#/components/schemas/FruitItem'
+        status:
+          type: string
+          description: Order status
+          enum: [Pending, Processing, Shipped, Cancelled, Completed]
+          example: "Pending"
+        createdAt:
+          type: string
+          format: date-time
+          description: Order creation timestamp (UTC)
+          example: "2025-01-10T09:30:00Z"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          example: "error_code"
+        message:
+          type: string
+          example: "Human friendly error message"
+  responses:
+    BadRequest:
+      description: Invalid input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            invalid:
+              value:
+                code: "invalid_request"
+                message: "Request body is invalid or missing required fields"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            notfound:
+              value:
+                code: "not_found"
+                message: "Order with the specified ID was not found"
+tags:
+  - name: orders
+    description: Operations related to fruit orders
+

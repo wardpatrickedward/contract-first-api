@@ -4,4 +4,5 @@
     <File Path="LICENSE" />
     <File Path="README.md" />
   </Folder>
+  <Project Path="Api/Api.csproj" Id="6ff3d236-dfd3-497c-8ed0-a7ba21324bfe" />
 </Solution>
