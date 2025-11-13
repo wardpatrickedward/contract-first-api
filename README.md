@@ -1,5 +1,7 @@
 # Contract First Development with Minimal APIs in .NET
 
+## Overview
+
 This repository demonstrates a contract-first approach for building a Minimal API in .NET 8. The OpenAPI contract was designed first and the implementation was written to match the contract. The implementation was created with the help of an AI agent, `GitHub Copilot`, which assisted in shaping the code to conform to the contract.
 
 Key files and responsibilities:
@@ -49,4 +51,8 @@ How to run:
 3. The API exposes endpoints implemented to match the OpenAPI contract in `Api/openApi.yml`.
 
 This project serves as an example of aligning code to a pre-defined contract and shows how tooling and AI assistance can help keep implementation consistent with the specification.
+
+## Next Steps
+
+- Contract Testing: Implement tests to validate that the API adheres to the OpenAPI contract. 
 
