@@ -5,8 +5,24 @@ namespace Api
     using Api.Models;
     using Api.Services;
 
+    /// <summary>
+    /// Configures and runs the web application entry point for the Fruit Orders API service.
+    /// </summary>
+    /// <remarks>This class sets up the application's services, middleware, and HTTP endpoints, including
+    /// health checks and order management APIs. It registers Swagger for API documentation in development environments
+    /// and configures dependency injection for required services. The application exposes endpoints for retrieving,
+    /// creating, and querying fruit orders, as well as health and readiness probes for container orchestration or
+    /// monitoring systems.</remarks>
     public class Program
     {
+        /// <summary>
+        /// Configures and runs the web application, setting up API endpoints, services, and middleware for the order
+        /// management API.
+        /// </summary>
+        /// <remarks>This method sets up essential services, including API documentation via Swagger, and
+        /// maps endpoints for order management and health checks. It should be used as the application's entry point
+        /// and is not intended to be called directly by user code.</remarks>
+        /// <param name="args">An array of command-line arguments used to configure the application at startup.</param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
