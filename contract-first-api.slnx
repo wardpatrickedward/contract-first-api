@@ -1,8 +1,13 @@
 <Solution>
+  <Folder Name="/infra/">
+    <File Path=".github/workflows/dotnet.yml" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".gitignore" />
     <File Path="LICENSE" />
     <File Path="README.md" />
   </Folder>
-  <Project Path="Api/Api.csproj" Id="6ff3d236-dfd3-497c-8ed0-a7ba21324bfe" />
+  <Folder Name="/src/">
+    <Project Path="src/Api/Api.csproj" />
+  </Folder>
 </Solution>
