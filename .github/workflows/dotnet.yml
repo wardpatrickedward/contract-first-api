@@ -20,25 +20,34 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+  
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+
     - name: Restore dependencies
       run: dotnet restore
+
     - name: Build
       run: dotnet build --no-restore
+
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    
     - name: Run contract tests (Specmatic)
       run: pwsh -NoProfile -ExecutionPolicy Bypass -File tests/run.ps1
-    - uses: actions/upload-artifact@v4
+    
+    - name: Upload Contract Test Report
+      uses: actions/upload-artifact@v4
       with:
-       name: my-artifact
+       name: contract-test-report
        path: ${{ github.workspace }}/tests/build/reports/specmatic/html/*
+
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: (!cancelled())
       with:
+       check_name: Specmatic Contract Tests
        files: |
         ${{ github.workspace }}/tests/**/specmatic/*.xml
