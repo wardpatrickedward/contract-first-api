@@ -41,6 +41,6 @@ jobs:
       if: (!cancelled())
       with:
        files: |
-        /tests/build/reports/specmatic/*.xml
-        /tests/build/reports/specmatic/*.trx
-        /tests/build/reports/specmatic/*.json
+        /tests/**/specmatic/*.xml
+        /tests/**/specmatic/*.trx
+        /tests/**/specmatic/*.json
