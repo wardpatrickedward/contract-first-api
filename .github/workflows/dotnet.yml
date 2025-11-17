@@ -36,7 +36,6 @@ jobs:
       with:
        name: my-artifact
        path: /**/tests/build/reports/specmatic/html/*
-    - uses: michaelhenry/create-report@v2
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: (!cancelled())
