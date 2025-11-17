@@ -12,5 +12,6 @@
   </Folder>
   <Folder Name="/tests/">
     <File Path="tests/docker-compose.yaml" />
+    <File Path="tests/run.ps1" />
   </Folder>
 </Solution>
