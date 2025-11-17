@@ -26,7 +26,7 @@ services:
     volumes:
       - ../src/Api/openApi.yml:/openApi.yml
       - ./build/reports/specmatic:/testreport
-      - ./build/reports/specmatic/html:/build/reports/specmatic/html   
+      - ./build/reports/specmatic/html:/usr/src/app/build/reports/specmatic/html   
     networks:
       - test-network
 
