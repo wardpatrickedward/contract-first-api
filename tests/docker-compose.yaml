@@ -25,8 +25,8 @@ services:
     command:  "test /openApi.yml --testBaseURL http://contract-first-api:8080 --junitReportDir /testreport"
     volumes:
       - ../src/Api/openApi.yml:/openApi.yml
-      - ./testreport:/testreport
-      - ./build/reports/specmatic/html:/testreport/html    
+      - ./build/reports/specmatic:/testreport
+      - ./build/reports/specmatic/html:/build/reports/specmatic/html   
     networks:
       - test-network
 
