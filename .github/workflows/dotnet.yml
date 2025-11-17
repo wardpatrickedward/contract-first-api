@@ -41,6 +41,4 @@ jobs:
       if: (!cancelled())
       with:
        files: |
-        /tests/**/specmatic/*.xml
-        /tests/**/specmatic/*.trx
-        /tests/**/specmatic/*.json
+        ${{ github.workspace }}/tests/**/specmatic/*.xml
