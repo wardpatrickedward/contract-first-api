@@ -35,12 +35,12 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
        name: my-artifact
-       path: /**/tests/build/reports/specmatic/html/*
+       path: /tests/build/reports/specmatic/html/*
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: (!cancelled())
       with:
        files: |
-        tests/**/*.xml
-        tests/**/*.trx
-        tests/**/*.json
+        /tests/build/reports/specmatic/*.xml
+        /tests/build/reports/specmatic/*.trx
+        /tests/build/reports/specmatic/*.json
