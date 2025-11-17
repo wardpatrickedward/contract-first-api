@@ -10,4 +10,7 @@
   <Folder Name="/src/">
     <Project Path="src/Api/Api.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <File Path="tests/docker-compose.yaml" />
+  </Folder>
 </Solution>

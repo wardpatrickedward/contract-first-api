@@ -1,0 +1,34 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: src/Api/Dockerfile
+    image: contract-first-api-api:latest
+    container_name: contract-first-api
+    ports:
+      - "5000:8080"
+    healthcheck:
+      test: ["CMD","curl", "-f", "http://contract-first-api:8080/health/liveness"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - test-network
+
+  contract-test:
+    image: specmatic/specmatic:latest
+    depends_on:
+      api:
+        condition: service_healthy
+    command:  "test /openApi.yml --testBaseURL http://contract-first-api:8080 --junitReportDir /testreport"
+    volumes:
+      - ../src/Api/openApi.yml:/openApi.yml
+      - ./testreport:/testreport
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge

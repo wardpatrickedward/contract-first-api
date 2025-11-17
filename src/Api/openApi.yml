@@ -27,6 +27,12 @@ paths:
           examples:
             sample:
               value: 50
+            invalid_query:
+              summary: Zero is below minimum and should be considered invalid by contract
+              value: 0
+            invalid_query_type:
+              summary: Non-integer value to demonstrate schema violation
+              value: "abc"
         - name: offset
           in: query
           description: Number of orders to skip
@@ -38,6 +44,9 @@ paths:
           examples:
             sample:
               value: 0
+            invalid_offset:
+              summary: Negative offset should violate minimum
+              value: -5
       responses:
         '200':
           description: A JSON array of fruit orders
@@ -95,6 +104,22 @@ paths:
                   items:
                     - fruit: "Kiwi"
                       quantity: 10
+              missing_fields:
+                summary: Omit required fields (customerName) to trigger missing fields error
+                value:
+                  items:
+                    - fruit: "Kiwi"
+                      quantity: 10
+              invalid_item:
+                summary: Provide an item with invalid quantity to trigger item validation error
+                value:
+                  customerName: "Denise"
+                  items:
+                    - fruit: "Kiwi"
+                      quantity: 0
+              invalid_body:
+                summary: Malformed body (not an object) to represent invalid JSON / wrong type
+                value: "this is not a valid order object"
       responses:
         '201':
           description: Order created successfully
@@ -136,6 +161,9 @@ paths:
           examples:
             sample:
               value: "ord-001"
+            notfound:
+              summary: Non-existent order id to exercise 404 response
+              value: "ord-999"
       responses:
         '200':
           description: A single fruit order
@@ -239,10 +267,36 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
           examples:
-            invalid:
+            invalid_body:
+              summary: Missing or malformed request body
               value:
                 code: "invalid_request"
                 message: "Request body is invalid or missing required fields"
+            invalid_query:
+              summary: Invalid query parameter or type violation
+              value:
+                code: "invalid_request"
+                message: "Query parameter validation failed"
+            invalid_item:
+              summary: Invalid order item
+              value:
+                code: "invalid_request"
+                message: "Each item must include 'fruit' and a 'quantity' >= 1"
+            missing_fields:
+              summary: Missing required fields in request body
+              value:
+                code: "invalid_request"
+                message: "customerName and items are required"
+            invalid_query_type:
+              summary: Query parameter has wrong type
+              value:
+                code: "invalid_request"
+                message: "Query parameter validation failed"
+            invalid_offset:
+              summary: Offset below minimum
+              value:
+                code: "invalid_request"
+                message: "Query parameter validation failed"
     NotFound:
       description: Resource not found
       content:

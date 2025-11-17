@@ -4,6 +4,7 @@ namespace Api
     using System;
     using Api.Models;
     using Api.Services;
+    using Microsoft.AspNetCore.Http;
 
     /// <summary>
     /// Configures and runs the web application entry point for the Fruit Orders API service.
@@ -35,6 +36,23 @@ namespace Api
 
             var app = builder.Build();
 
+            // Middleware to ensure malformed JSON / BadHttpRequestException is returned as JSON Error
+            app.Use(async (context, next) =>
+            {
+                try
+                {
+                    await next();
+                }
+                catch (BadHttpRequestException)
+                {
+                    context.Response.Clear();
+                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    context.Response.ContentType = "application/json";
+                    var err = new Error("invalid_request", "Request body is invalid or missing required fields");
+                    await context.Response.WriteAsJsonAsync(err);
+                }
+            });
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger(c=>c.SetCustomDocumentSerializer<CustomSwaggerDocumentSerializer>());
@@ -42,11 +60,22 @@ namespace Api
             }
 
             // Health and readiness probes, not part of OpenAPI spec
-            app.MapGet("/health", () => Results.Ok("Healthy"));
-            app.MapGet("/ready", () => Results.Ok("Ready"));
+            app.MapGet("/health/liveness", () => Results.Ok("live"));
+            app.MapGet("/health/readiness", () => Results.Ok("Ready"));
 
             app.MapGet("/orders", (OrderService svc, int? limit, int? offset) =>
             {
+                // Validate query parameters per contract - return 400 when values violate schema
+                if (limit.HasValue && (limit.Value < 1 || limit.Value > 100))
+                {
+                    return Results.BadRequest(new Error("invalid_request", "Query parameter validation failed"));
+                }
+
+                if (offset.HasValue && offset.Value < 0)
+                {
+                    return Results.BadRequest(new Error("invalid_request", "Query parameter validation failed"));
+                }
+
                 var actualOffset = Math.Max(0, offset ?? 0);
                 var actualLimit = Math.Clamp(limit ?? 50, 1, 100);
 
